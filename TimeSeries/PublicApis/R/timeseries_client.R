@@ -786,5 +786,20 @@ timeseriesClient <- setRefClass("timeseriesClient",
   )
 )
 
+timeseriesClient$methods(getLocationDescriptionList = function(locationName, locationIdentifier, locationFolder, changesSinceToken){
+  if (missing(locationName))        { locationName <- NULL }
+  if (missing(locationIdentifier))  { locationIdentifier <- NULL }
+  if (missing(locationFolder))      { locationFolder <- NULL }
+  if (missing(changesSinceToken))   { changesSinceToken <- NULL }
+  
+  q <- list(LocationName   = locationName,   LocationIdentifier = locationIdentifier, 
+            LocationFolder = locationFolder,  ChangesSinceToken = changesSinceToken)
+  q <- Filter(Negate(is.null), q)
+  
+  r <- GET(paste0(.self$publishUri, "/GetLocationDescriptionList"), query = q)
+  r <- stop_for_status(r, "Getting location description list")
+  content(r)
+})
+
 # Create a client in the global namespace
 timeseries = timeseriesClient()
