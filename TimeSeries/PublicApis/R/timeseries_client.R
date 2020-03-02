@@ -798,7 +798,7 @@ timeseriesClient$methods(getLocationDescriptionList = function(locationName, loc
   
   r <- GET(paste0(.self$publishUri, "/GetLocationDescriptionList"), query = q)
   r <- stop_for_status(r, "Getting location description list")
-  content(r)
+  fromJSON(content(r, 'text'))
 })
 
 # Create a client in the global namespace
