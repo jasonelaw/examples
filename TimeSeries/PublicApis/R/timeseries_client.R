@@ -780,7 +780,8 @@ timeseriesClient <- setRefClass("timeseriesClient",
       responseBatches <- mapply(batchPost, requestBatches, seq_along(requestBatches) - 1, SIMPLIFY = FALSE)
       
       # Flatten the list of response data frames into a single data frame
-      rbind_pages(responseBatches)
+      #rbind_pages(responseBatches)
+      responseBatches
     }
   }
   )
