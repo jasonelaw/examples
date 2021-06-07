@@ -1,6 +1,7 @@
 # Load dependencies
 require(jsonlite)
 require(httr)
+require(lubridate)
 
 # Sys.setenv(http_proxy="http://localhost:8888") # Enables Fiddler capturing of traffic
 # Sys.setenv(http_proxy="") # Disables Fiddler proxying
@@ -248,19 +249,7 @@ timeseriesClient <- setRefClass("timeseriesClient",
       #
       # This function can process roughly 10K timestamps/sec.
       # By comparison, the popular-and-otherwise-correct lubridate library is 60x slower at ~ 150 timestamps per second
-      len <- nchar(isoText)
-
-      if (substr(isoText, len - 2, len - 2) == ":") {
-        # The most common scenario from AQTS output: A truly correct ISO 8601 timestamp with a numeric UTC offset
-        # Strip out the colon separating the UTC offset, since that is what %z requires
-        isoText <- paste0(substr(isoText, 1, len - 3), substr(isoText, len - 1, len))
-      } else if (substr(isoText, len, len) == "Z") {
-        # Second most likely scenario from AQTS output: The "Z" representing a UTC time
-        # Convert the unsupported UTC shorthand into an offset with no effect
-        isoText <- paste0(substr(isoText, 1, len - 1), "+0000")
-      }
-
-      as.POSIXct(strptime(isoText, "%Y-%m-%dT%H:%M:%OS%z", "UTC"))
+      lubridate::parse_date_time2(isoText, "%Y-%m-%dT%H:%M:%OS%z", exact = TRUE)
     },
 
 #' Formats a datetime in ISO 8601 format
